@@ -1,0 +1,86 @@
+//// ------------------------------------------------------
+//// THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+//// ------------------------------------------------------
+
+Table User {
+  id Int [pk, increment]
+  firstName String [not null]
+  lastName String [not null]
+  email String [unique]
+  mobile String [unique]
+  password String [not null]
+  profileImage String
+  coverImage String
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+  posts Post [not null]
+  comments Comment [not null]
+  likes Like [not null]
+  senders Relationship [not null]
+  receivers Relationship [not null]
+}
+
+Table Post {
+  id Int [pk, increment]
+  message String
+  image String
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+  userId Int [not null]
+  user User [not null]
+  comments Comment [not null]
+  likes Like [not null]
+}
+
+Table Comment {
+  id Int [pk, increment]
+  message String [not null]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+  userId Int [not null]
+  postId Int [not null]
+  user User [not null]
+  post Post [not null]
+}
+
+Table Like {
+  userId Int [not null]
+  postId Int [not null]
+  createdAt DateTime [default: `now()`, not null]
+  user User [not null]
+  post Post [not null]
+
+  indexes {
+    (userId, postId) [pk]
+  }
+}
+
+Table Relationship {
+  id Int [pk, increment]
+  status RelationshipStatus [not null, default: 'PENDING']
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+  senderId Int [not null]
+  receiverId Int [not null]
+  sender User [not null]
+  receiver User [not null]
+}
+
+Enum RelationshipStatus {
+  PENDING
+  ACCEPTED
+}
+
+Ref: Post.userId > User.id
+
+Ref: Comment.userId > User.id
+
+Ref: Comment.postId > Post.id
+
+Ref: Like.userId > User.id
+
+Ref: Like.postId > Post.id
+
+Ref: Relationship.senderId > User.id
+
+Ref: Relationship.receiverId > User.id

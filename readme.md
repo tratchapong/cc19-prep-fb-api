@@ -2,7 +2,7 @@ CC18 Fakebook api
 ---
 ### env guide
 PORT=8899  
-DATABASE="mysql://u:pw@localhost:3306/cc18_fakebook"  
+DATABASE_URL="mysql://u:pw@localhost:3306/cc19_fakebook"  
 JWT_SECRET=YourOwnSecretKey  
   
 CLOUDINARY_NAME  
