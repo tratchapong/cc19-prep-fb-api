@@ -97,6 +97,6 @@ module.exports.login = tryCatch(async (req, res) => {
 })
 
 module.exports.getMe = (req, res) => {
-  res.send('getMe...')
+  res.json({user : req.user})
 }
 
