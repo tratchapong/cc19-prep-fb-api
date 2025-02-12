@@ -1,4 +1,5 @@
 const bcrypt = require('bcryptjs')
+const jwt = require('jsonwebtoken')
 const prisma = require('../models')
 const tryCatch = require('../utils/tryCatch')
 const createError = require('../utils/createError')
@@ -62,9 +63,39 @@ module.exports.register = tryCatch(async (req,res) => {
 })
 
 
-module.exports.login = (req, res) => {
-  res.send('Login...')
-}
+module.exports.login = tryCatch(async (req, res) => {
+	const {identity, password} = req.body
+
+	// validation
+	if( !(identity.trim() && password.trim()) ) {
+		createError(400, "Please fill all data")
+	}
+	// check identity is mobile or email
+	const identityKey = checkEmailorPhone(identity)
+	// find user 
+
+	const findUser = await prisma.user.findUnique({
+		where : { [identityKey] : identity }
+	})
+	console.log(findUser)
+	if(!findUser) {
+		createError(401,'invalid login')
+	}
+	// check password
+
+	let pwOk = await bcrypt.compare(password, findUser.password)
+	if(!pwOk) {
+		createError(401,'invalid login')
+	}
+
+	const payload = {
+		id: findUser.id
+	}
+	const token = jwt.sign(payload, process.env.JWT_SECRET, {expiresIn : '30d'})	
+	const { password : pw, createdAt, updatedAt, ...userData } = findUser
+	res.json({token : token, user: userData})
+})
+
 module.exports.getMe = (req, res) => {
   res.send('getMe...')
 }
