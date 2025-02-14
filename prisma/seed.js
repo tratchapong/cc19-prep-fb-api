@@ -25,7 +25,12 @@ const userData = [
 console.log('DB seed...')
 
 async function run() {
-	await prisma.user.createMany({ data: userData })
+	try {
+		await prisma.user.createMany({ data: userData })
+	}catch(err) {
+		console.log('***Error***')
+		console.log(err.message)
+	}
 }
 
 run()
